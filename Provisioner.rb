@@ -296,7 +296,11 @@ class Tools
 
     # Test for file in the cache (via host_cache_dir) when this Vagrantfile runs,
     # but download the file (if not in the cache) to the cache (via guest_cache_dir)
-    # when Vagrant runs the provisioning scripts on the vm.
+    # when Vagrant runs the provisioning scripts on the vm.  Vagrant will run this
+    # Vagrantfile for all tasks including those that do not provision, e.g. 
+    # '$vargant destroy'.  By downloading the file via vm script rather than here,
+    # we prevent doing a download for those vagrant tasks that do not need it, again
+    # e.g. the destroy task.
     def download(url, cache_dir, filename)
       if not File.exist?("#{cache_dir[:host_path]}/#{filename}")
         run_script "curl -L --create-dirs -o #{cache_dir[:guest_path]}/#{filename} #{url}"
