@@ -223,10 +223,7 @@ class Provisioner
     end
 
     def provision(&block)
-      # TODO: redo the following two lines
-      action = Provision::Setup.const_get(:SyncedFolder)
-      action.instance_method(:osx).bind(@tools).call(SYNCED_DOWNLOAD_CACHE_FOLDER)  # guest needs access to downloaded files cached on the host
-    
+      Setup :SyncedFolder, SYNCED_DOWNLOAD_CACHE_FOLDER   # guest needs access to downloaded files cached on the host
       instance_eval(&block)
     end
   
