@@ -5,15 +5,13 @@ SYNCED_DOWNLOAD_CACHE_FOLDER = { host: "cache", guest: "/.vagrant_download_cache
 
 
 module Provision
-
   module Setup
-  
+    
     module Box
       def osx(box)
         @vagrant_config.vm.box = box      # TODO: @vagrant_config should be a function call
       end
     end
-  
   
     module Provider
       def osx(provider, vm_name)
@@ -24,14 +22,12 @@ module Provision
       end
     end
   
-  
     module SyncedFolder
       def osx(synced_folder)
         create_if_missing(synced_folder[:host])
         @vagrant_config.vm.synced_folder synced_folder[:host], synced_folder[:guest]
       end
     end
-  
   
     module ForwardedPort
       def osx(forwarded_port)
@@ -40,8 +36,10 @@ module Provision
     end
   
   end
+end
 
 
+module Provision
   module Install
 
     module OsxCommandLineTools
@@ -53,7 +51,6 @@ module Provision
       end
     end
 
-  
     module Gpg
       def osx
         say "Installing gpg, gpg-agent, and copying gpg keys from vm host"
@@ -67,7 +64,6 @@ module Provision
         EOF
       end
     end
-
   
     module Git
       def osx
@@ -79,14 +75,12 @@ module Provision
       end
     end
 
-  
     module Node
       def osx
         say "Installing nodejs"
         install_pkg 'http://nodejs.org/dist/v0.10.26/node-v0.10.26.pkg'
       end
     end
-
   
     module TextMate
       def osx
@@ -95,14 +89,12 @@ module Provision
       end
     end
 
-
     module Homebrew
       def osx
         say "Installing Homebrew"
         run_script 'ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"'
       end
     end
-
 
     module Bundler
       def osx
@@ -111,14 +103,12 @@ module Provision
       end
     end
 
-
     module Ruby
       def osx
         say "Installing Ruby"
         run_script "brew install ruby"
       end
     end
-
 
     module Python3
       def osx
@@ -128,7 +118,6 @@ module Provision
           'Python.mpkg'
       end
     end
-
 
     module Virtualenv
       def osx
@@ -147,8 +136,10 @@ module Provision
     end
 
   end
+end
 
 
+module Provision
   module Git
     module Clone
       def osx(project_github_url, project_vm_path)
@@ -157,8 +148,10 @@ module Provision
       end
     end
   end
+end
 
 
+module Provision
   module Npm
     module Install
       def osx(project_vm_path)
@@ -167,8 +160,10 @@ module Provision
       end
     end
   end
+end
 
 
+module Provision
   module Bundle
     module Install
       def osx(project_vm_path)
@@ -177,8 +172,10 @@ module Provision
       end
     end
   end
+end
 
 
+module Provision
   module Pip
     module Install
       def osx(project_vm_path)
@@ -187,8 +184,10 @@ module Provision
       end
     end
   end
+end
 
 
+module Provision
   module Virtualenv
     module Create
       def osx(project_vm_path)
@@ -201,8 +200,10 @@ module Provision
       end
     end
   end
+end
 
 
+module Provision
   module Reboot
     module Vm
       def osx 
@@ -211,8 +212,6 @@ module Provision
       end
     end
   end
-  
-  
 end
 
 
