@@ -255,7 +255,7 @@ class Provisioner
       subject = get_subject(subject_name)
       action = get_action(subject, action_name)
       osx_method = get_osx_method(subject, action)
-      osx_method.bind(@tools).call(*args)
+      osx_method.bind(@tools).call(*args, &block)
     end
     
     def get_subject(subject_name)
