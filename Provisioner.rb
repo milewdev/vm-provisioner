@@ -50,9 +50,7 @@ module Provision
     module OsxCommandLineTools
       def osx
         say "Installing OS X Command Line Tools"
-        install_dmg 'https://s3.amazonaws.com/OHSNAP/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg',
-          'Command Line Developer Tools',
-          'Command Line Tools (OS X 10.9).pkg'
+        install_dmg 'https://s3.amazonaws.com/OHSNAP/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg'
       end
     end
 
@@ -60,9 +58,7 @@ module Provision
     module Gpg
       def osx
         say "Installing gpg, gpg-agent, and copying gpg keys from vm host"
-        install_dmg 'https://releases.gpgtools.org/GPG%20Suite%20-%202013.10.22.dmg',
-          'GPG Suite',
-          'Install.pkg'
+        install_dmg 'https://releases.gpgtools.org/GPG%20Suite%20-%202013.10.22.dmg'
         run_script <<-'EOF'
           sudo rm -rf /Users/vagrant/.gnupg
           sudo rsync -r --exclude '.gnupg/S.gpg-agent' /.vagrant_host_home/.gnupg /Users/vagrant
@@ -75,9 +71,7 @@ module Provision
     module Git
       def osx
         say "Installing git and copying .gitconfig from vm host"
-        install_dmg 'https://git-osx-installer.googlecode.com/files/git-1.8.4.2-intel-universal-snow-leopard.dmg',
-          'Git 1.8.4.2 Snow Leopard Intel Universal',
-          'git-1.8.4.2-intel-universal-snow-leopard.pkg'
+        install_dmg 'https://git-osx-installer.googlecode.com/files/git-1.8.4.2-intel-universal-snow-leopard.dmg'
         run_script "cp /.vagrant_host_home/.gitconfig /Users/vagrant/.gitconfig"
       end
     end
@@ -126,9 +120,7 @@ module Provision
     module Python3
       def osx
         say "Installing Python3"
-        install_dmg 'https://www.python.org/ftp/python/3.4.1/python-3.4.1-macosx10.6.dmg',
-          'Python 3.4.1',
-          'Python.mpkg'
+        install_dmg 'https://www.python.org/ftp/python/3.4.1/python-3.4.1-macosx10.6.dmg'
       end
     end
 
@@ -140,7 +132,7 @@ module Provision
         cache_dir = derive_cache_dir(url)
         download_to_cache(url, cache_dir, "virtualenv-1.11.6.tar.gz")
         run_script <<-"EOF"
-          tar xvfz #{cache_dir[:guest_path]}/virtualenv-1.11.6.tar.gz
+          tar xvfz "#{cache_dir[:guest_path]}/virtualenv-1.11.6.tar.gz"
           pushd virtualenv-1.11.6
           sudo python setup.py install
           popd
@@ -160,7 +152,9 @@ module Provision
     module Clone
       def osx(project_github_url, project_vm_path)
         say "Installing project source code"
-        run_script "git clone #{project_github_url} #{project_vm_path}"
+        run_script <<-"EOF"
+          git clone "#{project_github_url}" "#{project_vm_path}"
+        EOF
       end
     end
   end
@@ -174,7 +168,9 @@ module Provision
     module Install
       def osx(project_vm_path)
         say "Running npm install"
-        run_script "( cd #{project_vm_path} && exec npm install )"
+        run_script <<-"EOF"
+          ( cd "#{project_vm_path}" && exec npm install )
+        EOF
       end
     end
   end
@@ -188,7 +184,9 @@ module Provision
     module Install
       def osx(project_vm_path)
         say "Running bundle install"
-        run_script "( cd #{project_vm_path} && exec sudo bundle install )"
+        run_script <<-"EOF"
+          ( cd "#{project_vm_path}" && exec sudo bundle install )
+        EOF
       end
     end
   end
@@ -202,7 +200,9 @@ module Provision
     module Install
       def osx(project_vm_path)
         say "Running pip install -r requirements.txt"
-        run_script "( cd #{project_vm_path} && exec bin/pip install -r requirements.txt )"
+        run_script <<-"EOF"
+          ( cd "#{project_vm_path}" && exec bin/pip install -r requirements.txt )
+        EOF
       end
     end
   end
@@ -217,7 +217,7 @@ module Provision
       def osx(project_vm_path)
         say "Running virtualenv"
         run_script <<-"EOF"
-          pushd #{project_vm_path}
+          pushd "#{project_vm_path}"
           virtualenv --no-site-packages --python=`which python3` env
           popd
         EOF
@@ -273,32 +273,31 @@ class Tools
       @vagrant_config = vagrant_config
     end
 
-    def install_dmg(url, path, pkg)
+    def install_dmg(url)
       cache_dir = derive_cache_dir(url)
       download_to_cache(url, cache_dir, "install.dmg")
-      run_dmg_installer(cache_dir, path, pkg)
-    end
-
-    def run_dmg_installer(cache_dir, path, pkg)
-      path = '/Volumes/' + escape_shell_special_chars(path)
-      pkg = escape_shell_special_chars(pkg)
       run_script <<-"EOF"
-        hdiutil attach '#{cache_dir[:guest_path]}/install.dmg'
-        sudo installer -pkg '#{path}/#{pkg}' -target /
-        hdiutil detach '#{path}'
+        hdiutil detach "/Volumes/_vm_provisioning_" 2>&1 > /dev/null
+        hdiutil attach "#{cache_dir[:guest_path]}/install.dmg" -mountpoint "/Volumes/_vm_provisioning_"
+        sudo installer -pkg "`ls /Volumes/_vm_provisioning_/*.pkg`" -target /
+        hdiutil detach "/Volumes/_vm_provisioning_"
       EOF
     end
 
     def install_tar(url)
       cache_dir = derive_cache_dir(url)
       download_to_cache(url, cache_dir, "install.tar")
-      run_script "sudo tar -x -C /Applications -f '#{cache_dir[:guest_path]}/install.tar'"
+      run_script <<-"EOF"
+        sudo tar -x -C /Applications -f "#{cache_dir[:guest_path]}/install.tar"
+      EOF
     end
 
     def install_pkg(url)
       cache_dir = derive_cache_dir(url)
       download_to_cache(url, cache_dir, "install.pkg")
-      run_script "sudo installer -pkg '#{cache_dir[:guest_path]}/install.pkg' -target /"
+      run_script <<-"EOF"
+        sudo installer -pkg "#{cache_dir[:guest_path]}/install.pkg" -target /
+      EOF
     end
 
     def create_if_missing(folder)
@@ -325,7 +324,9 @@ class Tools
     # e.g. the destroy task.
     def download_to_cache(url, cache_dir, filename)
       if not File.exist?("#{cache_dir[:host_path]}/#{filename}")
-        run_script "curl -L --create-dirs -o '#{cache_dir[:guest_path]}/#{filename}' '#{url}'"
+        run_script <<-"EOF"
+          curl -L --create-dirs -o "#{cache_dir[:guest_path]}/#{filename}" "#{url}"
+        EOF
       end
     end
 
