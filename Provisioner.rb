@@ -344,9 +344,4 @@ class Tools
       url.gsub( /[^a-zA-Z0-9]/ ) { |s| sprintf('%2X', s.ord) }
     end
 
-    # 'my product (v1)' => 'my\ product\ \(v1\)'
-    def escape_shell_special_chars(string)
-      string.gsub(/([ ()])/, '\\\\\1')
-    end
-
 end
