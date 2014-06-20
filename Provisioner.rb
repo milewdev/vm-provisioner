@@ -283,22 +283,22 @@ class Tools
       path = '/Volumes/' + escape_shell_special_chars(path)
       pkg = escape_shell_special_chars(pkg)
       run_script <<-"EOF"
-        hdiutil attach #{cache_dir[:guest_path]}/install.dmg
-        sudo installer -pkg #{path}/#{pkg} -target /
-        hdiutil detach #{path}
+        hdiutil attach '#{cache_dir[:guest_path]}/install.dmg'
+        sudo installer -pkg '#{path}/#{pkg}' -target /
+        hdiutil detach '#{path}'
       EOF
     end
 
     def install_tar(url)
       cache_dir = derive_cache_dir(url)
       download_to_cache(url, cache_dir, "install.tar")
-      run_script "sudo tar -x -C /Applications -f #{cache_dir[:guest_path]}/install.tar"
+      run_script "sudo tar -x -C /Applications -f '#{cache_dir[:guest_path]}/install.tar'"
     end
 
     def install_pkg(url)
       cache_dir = derive_cache_dir(url)
       download_to_cache(url, cache_dir, "install.pkg")
-      run_script "sudo installer -pkg #{cache_dir[:guest_path]}/install.pkg -target /"
+      run_script "sudo installer -pkg '#{cache_dir[:guest_path]}/install.pkg' -target /"
     end
 
     def create_if_missing(folder)
@@ -325,7 +325,7 @@ class Tools
     # e.g. the destroy task.
     def download_to_cache(url, cache_dir, filename)
       if not File.exist?("#{cache_dir[:host_path]}/#{filename}")
-        run_script "curl -L --create-dirs -o #{cache_dir[:guest_path]}/#{filename} #{url}"
+        run_script "curl -L --create-dirs -o '#{cache_dir[:guest_path]}/#{filename}' '#{url}'"
       end
     end
 
