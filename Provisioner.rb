@@ -7,12 +7,14 @@ SYNCED_DOWNLOAD_CACHE_FOLDER = { host: "cache", guest: "/.vagrant_download_cache
 module Provision
   module Setup
     
+    # Setup :Box, "OSX109"
     module Box
       def osx(box)
         @vagrant_config.vm.box = box      # TODO: @vagrant_config should be a function call
       end
     end
   
+    # Setup :Provider, "vmware_fusion", "MyProjectDevEnv"
     module Provider
       def osx(provider, vm_name)
         @vagrant_config.vm.provider(provider) do |vb|
@@ -22,6 +24,7 @@ module Provision
       end
     end
   
+    # Setup :SyncedFolder, { host: "~/", guest: "/.vagrant_host_home" }
     module SyncedFolder
       def osx(synced_folder)
         create_if_missing(synced_folder[:host])
@@ -29,6 +32,7 @@ module Provision
       end
     end
   
+    # Setup :ForwardedPort, { guest: 4000, host: 4000 }
     module ForwardedPort
       def osx(forwarded_port)
         @vagrant_config.vm.network "forwarded_port", guest: forwarded_port[:guest], host: forwarded_port[:host]
@@ -42,6 +46,7 @@ end
 module Provision
   module Install
 
+    # Install :OsxCommandLineTools
     module OsxCommandLineTools
       def osx
         say "Installing OS X Command Line Tools"
@@ -51,6 +56,7 @@ module Provision
       end
     end
 
+    # Install :Gpg
     module Gpg
       def osx
         say "Installing gpg, gpg-agent, and copying gpg keys from vm host"
@@ -65,6 +71,7 @@ module Provision
       end
     end
   
+    # Install :Git
     module Git
       def osx
         say "Installing git and copying .gitconfig from vm host"
@@ -75,6 +82,7 @@ module Provision
       end
     end
 
+    # Install :Node
     module Node
       def osx
         say "Installing nodejs"
@@ -82,6 +90,7 @@ module Provision
       end
     end
   
+    # Install :TextMate
     module TextMate
       def osx
         say "Installing TextMate"
@@ -89,6 +98,7 @@ module Provision
       end
     end
 
+    # Install :Homebrew
     module Homebrew
       def osx
         say "Installing Homebrew"
@@ -96,6 +106,7 @@ module Provision
       end
     end
 
+    # Install :Bundler
     module Bundler
       def osx
         say "Installing Ruby's bundler"
@@ -103,6 +114,7 @@ module Provision
       end
     end
 
+    # Install :Ruby
     module Ruby
       def osx
         say "Installing Ruby"
@@ -110,6 +122,7 @@ module Provision
       end
     end
 
+    # Install :Python3
     module Python3
       def osx
         say "Installing Python3"
@@ -119,12 +132,13 @@ module Provision
       end
     end
 
+    # Install :Virtualenv
     module Virtualenv
       def osx
         say "Installing Python's virtualenv"
         url = "https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.6.tar.gz"
         cache_dir = derive_cache_dir(url)
-        download url, cache_dir, "virtualenv-1.11.6.tar.gz"
+        download_to_cache(url, cache_dir, "virtualenv-1.11.6.tar.gz")
         run_script <<-"EOF"
           tar xvfz #{cache_dir[:guest_path]}/virtualenv-1.11.6.tar.gz
           pushd virtualenv-1.11.6
@@ -141,6 +155,8 @@ end
 
 module Provision
   module Git
+    
+    # Git :Clone "https://github.com/milewgit/#{PROJECT_NAME}.git", "/Users/vagrant/Documents/MyProjectDevEnv"
     module Clone
       def osx(project_github_url, project_vm_path)
         say "Installing project source code"
@@ -153,6 +169,8 @@ end
 
 module Provision
   module Npm
+    
+    # Npm :Install "/Users/vagrant/Documents/MyProjectDevEnv"
     module Install
       def osx(project_vm_path)
         say "Running npm install"
@@ -165,6 +183,8 @@ end
 
 module Provision
   module Bundle
+    
+    # Bundle :Install, "/Users/vagrant/Documents/MyProjectDevEnv"
     module Install
       def osx(project_vm_path)
         say "Running bundle install"
@@ -177,6 +197,8 @@ end
 
 module Provision
   module Pip
+    
+    # Pip :Install, "/Users/vagrant/Documents/MyProjectDevEnv" 
     module Install
       def osx(project_vm_path)
         say "Running pip install -r requirements.txt"
@@ -189,6 +211,8 @@ end
 
 module Provision
   module Virtualenv
+    
+    # Virtualenv :Create, "/Users/vagrant/Documents/MyProjectDevEnv"
     module Create
       def osx(project_vm_path)
         say "Running virtualenv"
@@ -205,6 +229,8 @@ end
 
 module Provision
   module Reboot
+    
+    # Reboot :Vm
     module Vm
       def osx 
         say "Rebooting"
@@ -249,7 +275,7 @@ class Tools
 
     def install_dmg(url, path, pkg)
       cache_dir = derive_cache_dir(url)
-      download(url, cache_dir, "install.dmg")
+      download_to_cache(url, cache_dir, "install.dmg")
       run_dmg_installer(cache_dir, path, pkg)
     end
 
@@ -265,13 +291,13 @@ class Tools
 
     def install_tar(url)
       cache_dir = derive_cache_dir(url)
-      download(url, cache_dir, "install.tar")
+      download_to_cache(url, cache_dir, "install.tar")
       run_script "sudo tar -x -C /Applications -f #{cache_dir[:guest_path]}/install.tar"
     end
 
     def install_pkg(url)
       cache_dir = derive_cache_dir(url)
-      download(url, cache_dir, "install.pkg")
+      download_to_cache(url, cache_dir, "install.pkg")
       run_script "sudo installer -pkg #{cache_dir[:guest_path]}/install.pkg -target /"
     end
 
@@ -297,7 +323,7 @@ class Tools
     # '$vargant destroy'.  By downloading the file via vm script rather than here,
     # we prevent doing a download for those vagrant tasks that do not need it, again
     # e.g. the destroy task.
-    def download(url, cache_dir, filename)
+    def download_to_cache(url, cache_dir, filename)
       if not File.exist?("#{cache_dir[:host_path]}/#{filename}")
         run_script "curl -L --create-dirs -o #{cache_dir[:guest_path]}/#{filename} #{url}"
       end
