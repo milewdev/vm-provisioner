@@ -244,7 +244,7 @@ end
 class Provisioner
 
     def initialize(vagrant_config)
-      @tools = Tools.new(vagrant_config)
+      @tools = OSXTools.new(vagrant_config)
     end
 
     def provision(&block)
@@ -267,7 +267,7 @@ class Provisioner
 end
 
 
-class Tools
+class OSXTools
 
     def initialize(vagrant_config)
       @vagrant_config = vagrant_config
