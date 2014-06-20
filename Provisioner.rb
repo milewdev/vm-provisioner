@@ -240,26 +240,54 @@ end
 
 
 class Provisioner
-
+  
     def initialize(vagrant_config)
       @tools = OSXTools.new(vagrant_config)
     end
 
     def provision(&block)
-      Setup :SyncedFolder, SYNCED_DOWNLOAD_CACHE_FOLDER   # guest needs access to downloaded files cached on the host
+      Setup :SyncedFolder, SYNCED_DOWNLOAD_CACHE_FOLDER     # allow guest vm to access downloaded files that are cached on the host
       instance_eval(&block)
     end
   
-    # TODO: refactor
-    # TODO: check that osx() method exists
     # TODO: pass &block to osx() method
-    def method_missing(method, action_name, *args, &block)
-      raise "Unknown subject '#{method}' (no module #{method} found within module Provision)" unless Provision.constants.grep(method).length > 0
-      raise "No action specified for subject '#{method} (try something like: #{method} :some_action)" if action_name.nil?
-      subject = Provision.const_get(method)
-      raise "Unknown action '#{action_name}' (no module #{action_name} found within module Provision::#{method})" unless subject.constants.grep(action_name).length > 0
-      action = subject.const_get(action_name)
-      action.instance_method(:osx).bind(@tools).call(*args)
+    def method_missing(subject_name, action_name, *args, &block)
+      subject = get_subject(subject_name)
+      action = get_action(subject, action_name)
+      osx_method = get_osx_method(subject, action)
+      osx_method.bind(@tools).call(*args)
+    end
+    
+    def get_subject(subject_name)
+      raise_unknown_subject(subject_name) if Provision.constants.grep(subject_name).length == 0
+      Provision.const_get(subject_name)
+    end
+    
+    def get_action(subject, action_name)
+      raise_no_action_specified(subject) if action_name.nil?
+      raise_unknown_action(subject, action_name) if subject.constants.grep(action_name).length == 0
+      subject.const_get(action_name)
+    end
+    
+    def get_osx_method(subject, action)
+      raise_no_osx_method_found(subject, action) unless action.method_defined?(:osx)
+      action.instance_method(:osx)
+    end
+    
+    def raise_unknown_subject(subject_name)
+      raise "Unknown subject '#{subject_name}' (no module #{subject_name} found within module Provision)" 
+    end
+    
+    def raise_no_action_specified(subject_name)
+      raise "No action specified for subject '#{subject_name} (try something like: #{subject_name} :some_action)" 
+    end
+    
+    def raise_unknown_action(subject, action_name)
+      raise "Unknown action '#{action_name}' (no module #{action_name} found within module Provision::#{subject})" 
+    end
+    
+    def raise_no_osx_method_found(subject, action)
+      raise "No osx() method found in Provision::#{subject}::#{action}"
     end
 
 end
