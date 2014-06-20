@@ -7,14 +7,14 @@ module Provision
     # Setup :Box, "OSX109"
     module Box
       def osx(box)
-        @vagrant_config.vm.box = box      # TODO: @vagrant_config should be a function call
+        vagrant_config().vm.box = box
       end
     end
   
     # Setup :Provider, "vmware_fusion", "MyProjectDevEnv"
     module Provider
       def osx(provider, vm_name)
-        @vagrant_config.vm.provider(provider) do |vb|
+        vagrant_config().vm.provider(provider) do |vb|
           vb.name = vm_name
           vb.gui = true
         end
@@ -26,14 +26,14 @@ module Provision
       def osx(synced_folder)
         require "fileutils"
         FileUtils.mkdir_p(synced_folder[:host])
-        @vagrant_config.vm.synced_folder synced_folder[:host], synced_folder[:guest]
+        vagrant_config().vm.synced_folder synced_folder[:host], synced_folder[:guest]
       end
     end
   
     # Setup :ForwardedPort, { guest: 4000, host: 4000 }
     module ForwardedPort
       def osx(forwarded_port)
-        @vagrant_config.vm.network "forwarded_port", guest: forwarded_port[:guest], host: forwarded_port[:host]
+        vagrant_config().vm.network "forwarded_port", guest: forwarded_port[:guest], host: forwarded_port[:host]
       end
     end
   
@@ -270,6 +270,10 @@ class OSXTools
     def initialize(vagrant_config)
       @vagrant_config = vagrant_config
     end
+    
+    def vagrant_config
+      @vagrant_config
+    end
 
     def install_dmg(url)
       cache_dir = derive_cache_dir(url)
@@ -303,7 +307,7 @@ class OSXTools
     end
 
     def run_script(script)
-      @vagrant_config.vm.provision :shell, privileged: false, inline: script
+      vagrant_config().vm.provision :shell, privileged: false, inline: script
     end
 
   private
