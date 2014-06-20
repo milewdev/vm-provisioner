@@ -1,6 +1,3 @@
-require "fileutils"
-
-
 SYNCED_DOWNLOAD_CACHE_FOLDER = { host: "cache", guest: "/.vagrant_download_cache" }
 
 
@@ -27,7 +24,8 @@ module Provision
     # Setup :SyncedFolder, { host: "~/", guest: "/.vagrant_host_home" }
     module SyncedFolder
       def osx(synced_folder)
-        create_if_missing(synced_folder[:host])
+        require "fileutils"
+        FileUtils.mkdir_p(synced_folder[:host])
         @vagrant_config.vm.synced_folder synced_folder[:host], synced_folder[:guest]
       end
     end
@@ -298,11 +296,6 @@ class OSXTools
       run_script <<-"EOF"
         sudo installer -pkg "#{cache_dir[:guest_path]}/install.pkg" -target /
       EOF
-    end
-
-    def create_if_missing(folder)
-      folder = File.expand_path(folder)
-      FileUtils.mkdir_p(folder) unless File.exist?(folder)
     end
   
     def say(message)
