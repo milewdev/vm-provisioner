@@ -1,4 +1,4 @@
-SYNCED_DOWNLOAD_CACHE_FOLDER = { host: "cache", guest: "/.vagrant_download_cache" }
+CACHE_ROOT_DIR = { host: "provisioning_cache", guest: "/.provisioning_cache" }
 
 
 module Provision
@@ -241,16 +241,20 @@ end
 
 class Provisioner
   
+    def self.provision(vagrant_config, &block)
+      Provisioner.new(vagrant_config).run(&block)
+    end
+  
     def initialize(vagrant_config)
-      @tools = OSXTools.new(vagrant_config)
+      @cache_root_dir = CACHE_ROOT_DIR
+      @tools = OSXTools.new(vagrant_config, @cache_root_dir)
     end
 
-    def provision(&block)
-      Setup :SyncedFolder, SYNCED_DOWNLOAD_CACHE_FOLDER     # allow guest vm to access downloaded files that are cached on the host
+    def run(&block)
+      Setup :SyncedFolder, @cache_root_dir    # allow guest vm to access downloaded files that are cached on the host
       instance_eval(&block)
     end
   
-    # TODO: pass &block to osx() method
     def method_missing(subject_name, action_name, *args, &block)
       subject = get_subject(subject_name)
       action = get_action(subject, action_name)
@@ -295,8 +299,9 @@ end
 
 class OSXTools
 
-    def initialize(vagrant_config)
+    def initialize(vagrant_config, cache_root_dir)
       @vagrant_config = vagrant_config
+      @cache_root_dir = cache_root_dir
     end
     
     def vagrant_config
@@ -359,8 +364,8 @@ class OSXTools
     # to access it from the host, the other from the guest vm.
     def derive_cache_dir(url)
       url_dir = url2dir(url)
-      host_path = File.join(SYNCED_DOWNLOAD_CACHE_FOLDER[:host], url_dir)
-      guest_path = File.join(SYNCED_DOWNLOAD_CACHE_FOLDER[:guest], url_dir)
+      host_path = File.join(@cache_root_dir[:host], url_dir)
+      guest_path = File.join(@cache_root_dir[:guest], url_dir)
       {host_path: host_path, guest_path: guest_path}
     end
 
