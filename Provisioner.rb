@@ -1,6 +1,57 @@
+#
+# Please view the README file prior to reading this source code.
+#
+
+
+#
+# Files that are downloaded by provisioning steps, such as dmg and pkg files,
+# are stored by Provisioner.rb in a cache on the host machine.  In general, this 
+# speeds up all but the first 'vagrant up'.  
+#
+# However, vagrant will run all statements in the Vagrantfile for all vagrant commands, 
+# including, say, 'up' and 'destroy', but we only want to do downloads when running the 
+# 'up' command.  This means we must do downloads via the Vagrant 'provision :shell'
+# command rather than directly via Ruby code in the Vagrantfile.  To that end, we
+# create a cache directory on the host, so that it does not vanish when we do a
+# 'vagrant destroy', but make it available to the vm so that files can be downloaded
+# to it and read from it.
+#
 CACHE_ROOT_DIR = { host: "provisioning_cache", guest: "/.provisioning_cache" }
 
 
+#
+# DSL provisioning statements in the Vagrantfile look like:
+#
+#     Install :Git
+#     Git :Clone, project_github_url, project_vm_dir
+#
+# and are implemented in this file as:
+#
+#     module Provision
+#       module Install
+#         module Git
+#           def osx
+#             # script code to install git on OS X goes here
+#           end
+#         end
+#       end
+#     end
+#
+#     module Provision
+#       module Git
+#         module Clone
+#           def osx(project_github_url, project_vm_dir)
+#             # script code to run 'git clone' on OS X goes here
+#           end
+#         end
+#       end
+#     end
+#
+# The Provision module is only used as a namespace to prevent name collisions with
+# whatever modules happen to be in the Ruby root namespace (e.g. :Object, :Module, 
+# :Class, :BasicObject, etc.); however, it has the unfortunate effect of adding 
+# another level of nesting, which increases complexity.
+#
 module Provision
   module Setup
     
@@ -146,12 +197,12 @@ end
 module Provision
   module Git
     
-    # Git :Clone "https://github.com/milewgit/#{PROJECT_NAME}.git", "/Users/vagrant/Documents/MyProjectDevEnv"
+    # Git :Clone, "https://github.com/milewgit/#{PROJECT_NAME}.git", "/Users/vagrant/Documents/MyProjectDevEnv"
     module Clone
-      def osx(project_github_url, project_vm_path)
+      def osx(project_github_url, project_vm_dir)
         say "Installing project source code"
         run_script <<-"EOF"
-          git clone "#{project_github_url}" "#{project_vm_path}"
+          git clone "#{project_github_url}" "#{project_vm_dir}"
         EOF
       end
     end
@@ -162,12 +213,12 @@ end
 module Provision
   module Npm
     
-    # Npm :Install "/Users/vagrant/Documents/MyProjectDevEnv"
+    # Npm :Install, "/Users/vagrant/Documents/MyProjectDevEnv"
     module Install
-      def osx(project_vm_path)
+      def osx(project_vm_dir)
         say "Running npm install"
         run_script <<-"EOF"
-          ( cd "#{project_vm_path}" && exec npm install )
+          ( cd "#{project_vm_dir}" && exec npm install )
         EOF
       end
     end
@@ -180,10 +231,10 @@ module Provision
     
     # Bundle :Install, "/Users/vagrant/Documents/MyProjectDevEnv"
     module Install
-      def osx(project_vm_path)
+      def osx(project_vm_dir)
         say "Running bundle install"
         run_script <<-"EOF"
-          ( cd "#{project_vm_path}" && exec sudo bundle install )
+          ( cd "#{project_vm_dir}" && exec sudo bundle install )
         EOF
       end
     end
@@ -196,10 +247,10 @@ module Provision
     
     # Pip :Install, "/Users/vagrant/Documents/MyProjectDevEnv" 
     module Install
-      def osx(project_vm_path)
+      def osx(project_vm_dir)
         say "Running pip install -r requirements.txt"
         run_script <<-"EOF"
-          ( cd "#{project_vm_path}" && exec bin/pip install -r requirements.txt )
+          ( cd "#{project_vm_dir}" && exec bin/pip install -r requirements.txt )
         EOF
       end
     end
@@ -212,10 +263,10 @@ module Provision
     
     # Virtualenv :Create, "/Users/vagrant/Documents/MyProjectDevEnv"
     module Create
-      def osx(project_vm_path)
+      def osx(project_vm_dir)
         say "Running virtualenv"
         run_script <<-"EOF"
-          pushd "#{project_vm_path}"
+          pushd "#{project_vm_dir}"
           virtualenv --no-site-packages --python=`which python3` env
           popd
         EOF
@@ -239,11 +290,18 @@ module Provision
 end
 
 
+#
+# Provisioner is responsible for mapping the provisioning DSL statements
+# into calls to appropriate methods in the Provision namespace.  For example, 
+# "Install :Git" is mapped to a call to Provision::Install::Git#osx.
+#
 class Provisioner
   
     def self.provision(vagrant_config, &block)
-      Provisioner.new(vagrant_config).run(&block)
+      Provisioner.new(vagrant_config).send(:run, &block)    # use #send because #run is private
     end
+  
+  private
   
     def initialize(vagrant_config)
       @cache_root_dir = CACHE_ROOT_DIR
@@ -251,10 +309,17 @@ class Provisioner
     end
 
     def run(&block)
-      Setup :SyncedFolder, @cache_root_dir    # allow guest vm to access downloaded files that are cached on the host
+      Setup :SyncedFolder, @cache_root_dir                  # allow guest vm to access files cached on the host
       instance_eval(&block)
     end
   
+    # Given 'Git :Clone, "https://github...", "/Users/..."', then subject_name is 'Git', 
+    # action_name is 'Clone', and *args is [ "https://github...", "/Users/..." ]. This is 
+    # then mapped to Provision::subject::acton#osx_method, i.e. Provision::Git::Clone#osx.
+    # #osx is invoked in the context of @tools so that #osx can make use of any of @tools'
+    # helper methods.  Note: this may be a bit of an obscure way of doing things because
+    # it is not self evident; TODO: perhaps a better idea would be to pass @tools as the
+    # first argument to #osx.
     def method_missing(subject_name, action_name, *args, &block)
       subject = get_subject(subject_name)
       action = get_action(subject, action_name)
@@ -308,9 +373,9 @@ class OSXTools
       @vagrant_config
     end
 
-    def install_dmg(url)
-      cache_dir = derive_cache_dir(url)
-      download_to_cache(url, cache_dir, "install.dmg")
+    def install_dmg(url_of_dmg_file)
+      cache_dir = derive_cache_dir(url_of_dmg_file)
+      download_to_cache(url_of_dmg_file, cache_dir, "install.dmg")
       run_script <<-"EOF"
         hdiutil detach "/Volumes/_vm_provisioning_" 2>&1 > /dev/null
         hdiutil attach "#{cache_dir[:guest_path]}/install.dmg" -mountpoint "/Volumes/_vm_provisioning_"
@@ -319,19 +384,19 @@ class OSXTools
       EOF
     end
 
-    def install_tar(url)
-      cache_dir = derive_cache_dir(url)
-      download_to_cache(url, cache_dir, "install.tar")
+    def install_pkg(url_of_pkg_file)
+      cache_dir = derive_cache_dir(url_of_pkg_file)
+      download_to_cache(url_of_pkg_file, cache_dir, "install.pkg")
       run_script <<-"EOF"
-        sudo tar -x -C /Applications -f "#{cache_dir[:guest_path]}/install.tar"
+        sudo installer -pkg "#{cache_dir[:guest_path]}/install.pkg" -target /
       EOF
     end
 
-    def install_pkg(url)
-      cache_dir = derive_cache_dir(url)
-      download_to_cache(url, cache_dir, "install.pkg")
+    def install_tar(url_of_tar_file)
+      cache_dir = derive_cache_dir(url_of_tar_file)
+      download_to_cache(url_of_tar_file, cache_dir, "install.tar")
       run_script <<-"EOF"
-        sudo installer -pkg "#{cache_dir[:guest_path]}/install.pkg" -target /
+        sudo tar -x -C /Applications -f "#{cache_dir[:guest_path]}/install.tar"
       EOF
     end
   
@@ -339,19 +404,17 @@ class OSXTools
       run_script "echo '--------------- #{message} ---------------'"
     end
 
-    def run_script(script)
-      vagrant_config().vm.provision :shell, privileged: false, inline: script
+    def run_script(script_code)
+      vagrant_config().vm.provision :shell, privileged: false, inline: script_code
     end
 
   private
 
-    # Test for file in the cache (via host_cache_dir) when this Vagrantfile runs,
-    # but download the file (if not in the cache) to the cache (via guest_cache_dir)
-    # when Vagrant runs the provisioning scripts on the vm.  Vagrant will run this
-    # Vagrantfile for all tasks including those that do not provision, e.g. 
-    # '$vargant destroy'.  By downloading the file via vm script rather than here,
-    # we prevent doing a download for those vagrant tasks that do not need it, again
-    # e.g. the destroy task.
+    # Download a file and store it in the cache on the host machine if it is not
+    # already there.  For reasons discussed in the comments near the top of this
+    # file, we test for the presence of the file right now, but we use Vagrant's 
+    # 'provision :shell' to download the file when Vagrant actually provisions
+    # the vm.
     def download_to_cache(url, cache_dir, filename)
       if not File.exist?("#{cache_dir[:host_path]}/#{filename}")
         run_script <<-"EOF"
