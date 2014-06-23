@@ -1,5 +1,4 @@
-Overview
-========
+##Overview
 
 Provisioner.rb is a helper for Vagrantfiles that provides simplistic Chef- or Puppet-like 
 provisioning on a vm.  Currently, only provisioning on OS X is supported.
@@ -53,8 +52,7 @@ This is an example of a complete Vagrantfile that uses Provisioner.rb:
 ```
 
   
-Existing Provisioning Commands
-==============================
+##Existing Provisioning Commands
 
 *Setup :Box, BOX_NAME*
 
@@ -77,8 +75,7 @@ Existing Provisioning Commands
 *Reboot :Vm*
 
 
-Creating a new Provisioning Command
-===================================
+##Creating a new Provisioning Command
   
 To provide a new provisioning command, for example:
 
@@ -100,11 +97,10 @@ open up Provisioner.rb and add the following:
   end
 ```
 
-#say is a helper function available to #osx that prints a message on the 'vagrant up' terminal.
+'say' is a helper function available to #osx that prints a message on the terminal.
 
 
-Helper Functions
-================
+##Helper Functions
 
 *#vagrant_config*
 
