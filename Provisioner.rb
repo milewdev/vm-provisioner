@@ -315,11 +315,9 @@ class Provisioner
   
     # Given 'Git :Clone, "https://github...", "/Users/..."', then subject_name is 'Git', 
     # action_name is 'Clone', and *args is [ "https://github...", "/Users/..." ]. This is 
-    # then mapped to Provision::subject::acton#osx_method, i.e. Provision::Git::Clone#osx.
+    # then mapped to Provision::subject::action#osx_method, i.e. Provision::Git::Clone#osx.
     # #osx is invoked in the context of @tools so that #osx can make use of any of @tools'
-    # helper methods.  Note: this may be a bit of an obscure way of doing things because
-    # it is not self evident; TODO: perhaps a better idea would be to pass @tools as the
-    # first argument to #osx.
+    # helper methods.
     def method_missing(subject_name, action_name, *args, &block)
       subject = get_subject(subject_name)
       action = get_action(subject, action_name)
@@ -362,6 +360,17 @@ class Provisioner
 end
 
 
+#
+# These are tools specific to OS X for helping with provisioning.  For example,
+# there are methods for installing various kinds of packages (dmg, pkg, tar),
+# running script code, and displaying messages.
+#
+# Note: this class also manages the cache, which seems like it should be extracted
+# to its own class.  However, the cache downloads files using a command that is
+# specific to the OS (e.g. curl for OS X, and presumably *nix as well), so there
+# is a circular dependency.  Right now the code is short enough to survive the
+# multiple responsibilities but this should be refactored if the code grows.
+#
 class OSXTools
 
     def initialize(vagrant_config, cache_root_dir)
@@ -416,9 +425,9 @@ class OSXTools
     # 'provision :shell' to download the file when Vagrant actually provisions
     # the vm.
     def download_to_cache(url, cache_dir, filename)
-      if not File.exist?("#{cache_dir[:host_path]}/#{filename}")
+      if not File.exist?(File.join(cache_dir[:host_path], filename))
         run_script <<-"EOF"
-          curl -L --create-dirs -o "#{cache_dir[:guest_path]}/#{filename}" "#{url}"
+          curl -L --create-dirs -o "#{ File.join(cache_dir[:guest_path], filename) }" "#{url}"
         EOF
       end
     end
