@@ -154,19 +154,19 @@ module Provision
       end
     end
 
-    # Install :Bundler
-    module Bundler
-      def osx
-        say "Installing Ruby's bundler"
-        run_script "sudo gem install bundler"
-      end
-    end
-
     # Install :Ruby
     module Ruby
       def osx
         say "Installing Ruby"
         run_script "brew install ruby"
+      end
+    end
+
+    # Install :Bundler
+    module Bundler
+      def osx
+        say "Installing Bundler"
+        run_script "sudo gem install bundler"
       end
     end
 
@@ -394,7 +394,7 @@ class OSXTools
       cache_dir = derive_cache_dir(url_of_dmg_file)
       download_to_cache(url_of_dmg_file, cache_dir, "install.dmg")
       run_script <<-"EOF"
-        hdiutil detach "/Volumes/_vm_provisioning_" 2>&1 > /dev/null
+        hdiutil detach "/Volumes/_vm_provisioning_" > /dev/null 2>&1
         hdiutil attach "#{cache_dir[:guest_path]}/install.dmg" -mountpoint "/Volumes/_vm_provisioning_"
         sudo installer -pkg "`ls /Volumes/_vm_provisioning_/*.pkg`" -target /
         hdiutil detach "/Volumes/_vm_provisioning_"
