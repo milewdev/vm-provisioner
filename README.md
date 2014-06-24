@@ -136,10 +136,8 @@ Note that you must first install git.  For example:
 ```
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant_config|
   with vagrant_config do
-    # ...
     Install :Git
     Git :Clone, "https://github.com/me/MyProject.git", "/Users/vagrant/Documents/MyProject"
-    # ...
   end
 end
 ```
@@ -168,12 +166,10 @@ For example:
 ```
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant_config|
   with vagrant_config do
-    # ...
     Install :Git
     Install :Node
     Git :Clone, "https://github.com/me/MyProject.git", "/Users/vagrant/Documents/MyProject"
     Npm :Install, "/Users/vagrant/Documents/MyProject"
-    # ...
   end
 end
 ```
@@ -202,13 +198,11 @@ For example:
 ```
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant_config|
   with vagrant_config do
-    # ...
     Install :Git
     Install :Homebrew       # needed by 'Install :Ruby'
     Install :Ruby
     Git :Clone, "https://github.com/me/MyProject.git", "/Users/vagrant/Documents/MyProject"
     Bundle :Install, "/Users/vagrant/Documents/MyProject"
-    # ...
   end
 end
 ```
@@ -238,12 +232,10 @@ includes requirements.txt.  For example:
 ```
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant_config|
   with vagrant_config do
-    # ...
     Install :Git
     Install :Python3
     Install :Virtualenv
     Virtualenv :Create, "/Users/vagrant/Documents/MyProject"
-    # ...
   end
 end
 ```
@@ -272,13 +264,11 @@ includes requirements.txt.  For example:
 ```
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant_config|
   with vagrant_config do
-    # ...
     Install :Git
     Install :Python3
     Install :Virtualenv
     Virtualenv :Create, "/Users/vagrant/Documents/MyProject"
     Pip :Install, "/Users/vagrant/Documents/MyProject"
-    # ...
   end
 end
 ```
@@ -287,7 +277,16 @@ end
 <br>
 **Reboot :Vm**
 
-Reboots the vm which may be useful on some operating systems after installing software.
+Reboots the vm which may be useful on some operating systems after installing software.  For
+example:
+
+```
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant_config|
+  with vagrant_config do
+    Reboot :Vm
+  end
+end
+```
 
 
 
