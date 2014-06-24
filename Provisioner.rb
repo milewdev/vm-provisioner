@@ -246,6 +246,7 @@ module Provision
   module Pip
     
     # Pip :Install, "/Users/vagrant/Documents/MyProjectDevEnv" 
+    # TODO: add requirements file name parameter (default requirements.txt)?
     module Install
       def osx(project_vm_dir)
         say "Running pip install -r requirements.txt"
@@ -262,6 +263,8 @@ module Provision
   module Virtualenv
     
     # Virtualenv :Create, "/Users/vagrant/Documents/MyProjectDevEnv"
+    # TODO: add env name parameter?
+    # TODO: add python version parameter?
     module Create
       def osx(project_vm_dir)
         say "Running virtualenv"
