@@ -169,7 +169,7 @@ module Provision
     module Bundler
       def osx
         say "Installing Bundler"
-        run_script "sudo gem install bundler"
+        run_script "gem install bundler"
       end
     end
 
