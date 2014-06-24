@@ -17,7 +17,7 @@ VM_NAME                   = PROJECT_NAME
 HOST_HOME_DIR             = { host: "~/", guest: "/.vagrant_host_home" }
 PROJECT_GITHUB_URL        = "https://github.com/milewgit/#{PROJECT_NAME}.git"
 PROJECT_VM_DIR            = "/Users/vagrant/Documents/#{PROJECT_NAME}"
-PROVISIONER_URL           = "https://raw.githubusercontent.com/milewgit/vm-installers/master/Provisioner.rb"
+PROVISIONER_URL           = "https://raw.githubusercontent.com/milewgit/vm-provisioner/master/Provisioner.rb"
 
 #
 # Provisioner provides a DSL to make Vagrantfile provisioning instructions 
