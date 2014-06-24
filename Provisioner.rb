@@ -16,6 +16,9 @@
 # 'vagrant destroy', but make it available to the vm so that files can be downloaded
 # to it and read from it.
 #
+# Caveat: not all downloaded files are cached.  For example, dependencies installed via
+# using 'bundle install', 'npm install', or 'pip install' are not cached.
+#
 CACHE_ROOT_DIR = { host: "provisioning_cache", guest: "/.provisioning_cache" }
 
 
@@ -94,6 +97,8 @@ end
 
 module Provision
   module Install
+    
+    # TODO: add version numbers?  e.g. Install :Git, 1.2.3
 
     # Install :OsxCommandLineTools
     module OsxCommandLineTools
