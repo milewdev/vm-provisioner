@@ -79,7 +79,7 @@ module Provision
     module SyncedFolder
       def osx(synced_folder)
         require "fileutils"
-        FileUtils.mkdir_p(synced_folder[:host])
+        FileUtils.mkdir_p(File.expand_path(synced_folder[:host]))
         vagrant_config().vm.synced_folder synced_folder[:host], synced_folder[:guest]
       end
     end
