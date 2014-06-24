@@ -150,7 +150,10 @@ module Provision
     module Homebrew
       def osx
         say "Installing Homebrew"
-        run_script 'ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"'
+        run_script <<-EOF
+          ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+          echo export PATH='/usr/local/bin:$PATH' >> ~/.bash_profile
+        EOF
       end
     end
 
@@ -239,7 +242,7 @@ module Provision
       def osx(project_vm_dir)
         say "Running bundle install"
         run_script <<-"EOF"
-          ( cd "#{project_vm_dir}" && exec sudo bundle install )
+          ( cd "#{project_vm_dir}" && exec bundle install )
         EOF
       end
     end

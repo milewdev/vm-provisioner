@@ -188,7 +188,7 @@ This is the same as doing:
 
 ```
 $ cd /Users/vagrant/Documents/MyProject
-$ sudo bundle install
+$ bundle install
 ```
 
 You would do this to have bundler install any dependencies listed in a Ruby project's Gemfile.  Note
