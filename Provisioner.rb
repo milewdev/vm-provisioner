@@ -417,6 +417,7 @@ class OSXTools
       EOF
     end
   
+    # TODO: need to escape single and double quotes in 'message' arg
     def say(message)
       run_script "echo '--------------- #{message} ---------------'"
     end
