@@ -158,10 +158,18 @@ module Provision
     module Homebrew
       def osx
         say "Installing Homebrew"
-        run_script <<-'EOF'
+        run_script <<-EOF
           ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
           echo export PATH='/usr/local/bin:$PATH' >> ~/.bash_profile
         EOF
+      end
+    end
+    
+    # Install :rvm
+    module Rvm
+      def osx
+        say "Installing RVM"
+        run_script '\curl -sSL https://get.rvm.io | bash -s stable'
       end
     end
 
@@ -177,7 +185,8 @@ module Provision
     module Ruby192
       def osx
         say "Installing Ruby 1.9.2"
-        run_script "brew install homebrew/versions/ruby192"
+        run_script "rvm install 1.9.2"
+        run_script "rvm --default use 1.9.2"    # Note: must be run in a new terminal window: http://pragmaticstudio.com/blog/2010/9/23/install-rails-ruby-mac
       end
     end
     
