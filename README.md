@@ -105,6 +105,7 @@ Install :Something on the vm.  The following are supported:
 Install :OsxCommandLineTools
 Install :Gpg
 Install :Git
+Install :GitHubForMac
 Install :Node
 Install :TextMate
 Install :Homebrew
@@ -452,6 +453,30 @@ end
 ```
 
 Note: when you do 'vagrant up', install_tar will first check to see if the tar
+file is in a local cache kept on the host machine (in the same directory as the
+Vagrantfile) and only download it if it is not already there.
+
+
+<br>
+**#install_zip(url_of_zip_file)**
+
+Download the zip file at the specified URL and expand it into the /Applications 
+directory on the vm.  For example:
+
+```
+module Provision
+  module Install
+    module GitHubForMac
+      def osx
+        say "Installing GitHub for Mac"
+        install_zip 'https://central.github.com/mac/latest'
+      end
+    end
+  end
+end
+```
+
+Note: when you do 'vagrant up', install_tar will first check to see if the zip
 file is in a local cache kept on the host machine (in the same directory as the
 Vagrantfile) and only download it if it is not already there.
 

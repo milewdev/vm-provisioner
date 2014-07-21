@@ -129,6 +129,14 @@ module Provision
         run_script "cp /.vagrant_host_home/.gitconfig /Users/vagrant/.gitconfig"
       end
     end
+    
+    # Install :GitHubForMac
+    module GitHubForMac
+      def osx
+        say "Installing GitHub for Mac"
+        install_zip 'https://central.github.com/mac/latest'
+      end
+    end
 
     # Install :Node
     module Node
@@ -417,6 +425,14 @@ class OSXTools
       download_to_cache(url_of_tar_file, cache_dir, "install.tar")
       run_script <<-"EOF"
         sudo tar -x -C /Applications -f "#{cache_dir[:guest_path]}/install.tar"
+      EOF
+    end
+    
+    def install_zip(url_of_zip_file)
+      cache_dir = derive_cache_dir(url_of_zip_file)
+      download_to_cache(url_of_zip_file, cache_dir, "install.zip")
+      run_script <<-"EOF"
+        unzip -d /Applications "#{cache_dir[:guest_path]}/install.zip"
       EOF
     end
   
