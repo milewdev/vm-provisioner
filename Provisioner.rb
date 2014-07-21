@@ -169,7 +169,7 @@ module Provision
     module Gcc46
       def osx
         say "Installing gcc46"
-        run_script "brew install gcc46"
+        run_script "brew install homebrew/versions/gcc46"
       end
     end
     
