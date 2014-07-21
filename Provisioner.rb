@@ -165,6 +165,14 @@ module Provision
       end
     end
     
+    # Install :Gcc46
+    module Gcc46
+      def osx
+        say "Installing gcc46"
+        run_script "brew install gcc46"
+      end
+    end
+    
     # Install :rvm
     module Rvm
       def osx
