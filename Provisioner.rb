@@ -172,6 +172,22 @@ module Provision
         run_script "brew install ruby"
       end
     end
+    
+    # Install :Ruby192
+    module Ruby192
+      def osx
+        say "Installing Ruby 1.9.2"
+        run_script "brew install homebrew/versions/ruby192"
+      end
+    end
+    
+    # Install :Rails3019
+    module Rails3019
+      def osx
+        say "Installing Rails 3.0.19"
+        run_script "gem install rails -v 3.0.19"
+      end
+    end
 
     # Install :Bundler
     module Bundler
