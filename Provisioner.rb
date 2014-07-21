@@ -457,7 +457,7 @@ class OSXTools
       cache_dir = derive_cache_dir(url_of_zip_file)
       download_to_cache(url_of_zip_file, cache_dir, "install.zip")
       run_script <<-"EOF"
-        unzip -d /Applications "#{cache_dir[:guest_path]}/install.zip"
+        unzip -qq -d /Applications "#{cache_dir[:guest_path]}/install.zip"
       EOF
     end
   
