@@ -104,7 +104,7 @@ module Provision
     module OsxCommandLineTools
       def osx
         say "Installing OS X Command Line Tools"
-        install_dmg 'http://adcdownload.apple.com/Developer_Tools/command_line_tools_os_x_mavericks_for_xcode__late_october_2013/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg'
+        install_dmg 'https://s3.amazonaws.com/OHSNAP/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg'
       end
     end
 
