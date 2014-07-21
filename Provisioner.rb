@@ -104,7 +104,7 @@ module Provision
     module OsxCommandLineTools
       def osx
         say "Installing OS X Command Line Tools"
-        install_dmg 'https://s3.amazonaws.com/OHSNAP/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg'
+        install_dmg 'http://adcdownload.apple.com/Developer_Tools/command_line_tools_os_x_mavericks_for_xcode__late_october_2013/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg'
       end
     end
 
@@ -158,7 +158,7 @@ module Provision
     module Homebrew
       def osx
         say "Installing Homebrew"
-        run_script <<-EOF
+        run_script <<-'EOF'
           ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
           echo export PATH='/usr/local/bin:$PATH' >> ~/.bash_profile
         EOF
