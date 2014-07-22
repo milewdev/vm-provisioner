@@ -164,22 +164,6 @@ module Provision
         EOF
       end
     end
-    
-    # Install :Gcc46
-    module Gcc46
-      def osx
-        say "Installing gcc46"
-        run_script "brew install homebrew/versions/gcc46"
-      end
-    end
-    
-    # Install :rvm
-    module Rvm
-      def osx
-        say "Installing RVM"
-        run_script '\curl -sSL https://get.rvm.io | bash -s stable'
-      end
-    end
 
     # Install :Ruby
     module Ruby
@@ -193,8 +177,7 @@ module Provision
     module Ruby192
       def osx
         say "Installing Ruby 1.9.2"
-        run_script "rvm install 1.9.2"
-        run_script "rvm --default use 1.9.2"    # Note: must be run in a new terminal window: http://pragmaticstudio.com/blog/2010/9/23/install-rails-ruby-mac
+        run_script "brew install ruby192"
       end
     end
     
