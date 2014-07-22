@@ -161,6 +161,8 @@ module Provision
         run_script <<-EOF
           ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
           echo export PATH='/usr/local/bin:$PATH' >> ~/.bash_profile
+          brew update
+          brew tap homebrew/versions
         EOF
       end
     end
