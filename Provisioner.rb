@@ -196,8 +196,9 @@ module Provision
       def osx
         say "Installing Ruby 1.9.3"
         run_script <<-'EOF'
-          rm -r /usr/local/lib/ruby/
           brew install ruby193
+          rm -r /usr/local/lib/ruby/      # fix ruby193 formula bug?
+          brew link ruby193
         EOF
       end
     end
