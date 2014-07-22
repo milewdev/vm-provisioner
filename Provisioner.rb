@@ -203,7 +203,6 @@ module Provision
           rbenv install 1.9.2-p326
           rbenv local 1.9.2-p326
           rbenv rehash
-          echo 'export RBENV_ROOT=/usr/local/var/rbenv' >> ~/.bash_profile
           echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
         EOF
       end
@@ -213,7 +212,7 @@ module Provision
     module Rails3019
       def osx
         say "Installing Rails 3.0.19"
-        run_script "gem install rails -v 3.0.19"
+        run_script "gem install --no-rdoc --no-ri rails -v 3.0.19"
       end
     end
 
