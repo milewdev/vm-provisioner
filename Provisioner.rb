@@ -199,7 +199,7 @@ module Provision
         run_script <<-'EOF'
           brew install apple-gcc42
           brew install rbenv
-          brew install build-ruby
+          brew install ruby-build
           rbenv install 1.9.2-p326
           rbenv local 1.9.2-p326
           rbenv rehash
