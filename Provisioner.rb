@@ -195,7 +195,10 @@ module Provision
     module Ruby193
       def osx
         say "Installing Ruby 1.9.3"
-        run_script "brew install ruby193"
+        run_script <<-'EOF'
+          rm -r /usr/local/lib/ruby/
+          brew install ruby193
+        EOF
       end
     end
     
