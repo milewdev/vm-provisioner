@@ -101,7 +101,7 @@ module Provision
     # TODO: add version numbers?  e.g. Install :Git, 1.2.3
     
     # Install :OsxCommandLineToolsMountainLion
-    module 
+    module OsxCommandLineToolsMountainLion
       def osx
         say "Installing OS X Command Line Tools for Mountain Lion"
         install_dmg 'http://devimages.apple.com/downloads/xcode/command_line_tools_for_xcode_os_x_mountain_lion_april_2013.dmg'
