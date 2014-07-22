@@ -441,7 +441,7 @@ class OSXTools
       run_script <<-"EOF"
         hdiutil detach "/Volumes/_vm_provisioning_" > /dev/null 2>&1
         hdiutil attach "#{cache_dir[:guest_path]}/install.dmg" -mountpoint "/Volumes/_vm_provisioning_"
-        sudo installer -pkg "`ls /Volumes/_vm_provisioning_/*.pkg`" -target /
+        sudo installer -pkg "`ls /Volumes/_vm_provisioning_/*.*pkg`" -target /
         hdiutil detach "/Volumes/_vm_provisioning_"
       EOF
     end
