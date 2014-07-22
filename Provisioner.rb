@@ -191,11 +191,11 @@ module Provision
       end
     end
     
-    # Install :Ruby192
-    module Ruby192
+    # Install :Ruby193
+    module Ruby193
       def osx
-        say "Installing Ruby 1.9.2"
-        run_script "brew install ruby192"
+        say "Installing Ruby 1.9.3"
+        run_script "brew install ruby193"
       end
     end
     
