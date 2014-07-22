@@ -178,7 +178,8 @@ module Provision
           ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
           echo export PATH='/usr/local/bin:$PATH' >> ~/.bash_profile
           brew update
-          brew tap homebrew/versions
+          # brew tap homebrew/versions    # did not work when installing ruby192 but left here for reference
+          brew tap homebrew/dupes
         EOF
       end
     end
@@ -191,14 +192,15 @@ module Provision
       end
     end
     
-    # Install :Ruby193
-    module Ruby193
+    # Install :Ruby192
+    module Ruby192
       def osx
-        say "Installing Ruby 1.9.3"
+        say "Installing Ruby 1.9.2"
         run_script <<-'EOF'
-          brew install ruby193
-          rm -r /usr/local/lib/ruby/      # fix ruby193 formula bug?
-          brew link ruby193
+          brew install apple-gcc42
+          brew install rbenv
+          brew install build-ruby
+          rbenv install 1.9.2-p326
         EOF
       end
     end
