@@ -203,7 +203,8 @@ module Provision
           rbenv install 1.9.2-p326
           rbenv local 1.9.2-p326
           rbenv rehash
-          echo 'eval "$(rbenv init - --no-rehash)"' >> ~/.bash_profile
+          echo 'export RBENV_ROOT=/usr/local/var/rbenv' >> ~/.bash_profile
+          echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
         EOF
       end
     end
