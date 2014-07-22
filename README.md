@@ -28,7 +28,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant_config|
     Setup    :Box, BOX
     Setup    :Provider, PROVIDER_NAME, VM_NAME
     Setup    :SyncedFolder, HOST_HOME_DIR                 # easy way to copy gpg keys and git config from host to vm
-    Install  :OsxCommandLineTools                         # needed by git
+    Install  :OsxCommandLineToolsMavericks                # needed by git
     Install  :Gpg                                         # needed to sign git commits
     Install  :Git                                         # source is on github
     Install  :Node                                        # used to run coffeescript compiler, tests under node.js
@@ -102,15 +102,18 @@ end
 Install :Something on the vm.  The following are supported:
 
 ```
-Install :OsxCommandLineTools
+Install :OsxCommandLineToolsMountainLion
+Install :OsxCommandLineToolsMavericks
 Install :Gpg
 Install :Git
 Install :GitHubForMac
 Install :Node
 Install :TextMate
 Install :Homebrew
-Install :Bundler
+Install :Ruby192
 Install :Ruby                   # Note: you must Install :Homebrew first
+Install :Rails3019
+Install :Bundler
 Install :Python3
 Install :Virtualenv
 ```
