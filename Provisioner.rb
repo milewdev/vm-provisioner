@@ -99,11 +99,27 @@ module Provision
   module Install
     
     # TODO: add version numbers?  e.g. Install :Git, 1.2.3
+    
+    # Install :OsxCommandLineToolsMountainLion
+    module 
+      def osx
+        say "Installing OS X Command Line Tools for Mountain Lion"
+        install_dmg 'http://devimages.apple.com/downloads/xcode/command_line_tools_for_xcode_os_x_mountain_lion_april_2013.dmg'
+      end
+    end
+
+    # Install :OsxCommandLineToolsMavericks
+    module OsxCommandLineToolsMavericks
+      def osx
+        say "Installing OS X Command Line Tools for Mavericks"
+        install_dmg 'https://s3.amazonaws.com/OHSNAP/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg'
+      end
+    end
 
     # Install :OsxCommandLineTools
     module OsxCommandLineTools
       def osx
-        say "Installing OS X Command Line Tools"
+        say "Installing OS X Command Line Tools (WARNING: deprecated; use 'Install :OsxCommandLineToolsMavericks' instead)"
         install_dmg 'https://s3.amazonaws.com/OHSNAP/command_line_tools_os_x_mavericks_for_xcode__late_october_2013.dmg'
       end
     end
