@@ -201,6 +201,9 @@ module Provision
           brew install rbenv
           brew install build-ruby
           rbenv install 1.9.2-p326
+          rbenv local 1.9.2-p326
+          rbenv rehash
+          echo 'eval "$(rbenv init - --no-rehash)"' >> ~/.bash_profile
         EOF
       end
     end
