@@ -212,7 +212,7 @@ module Provision
 
     # Install :Bundler [ "1.6.4" ]
     module Bundler
-      def osx
+      def osx(*args)
         version = args[0] || "1.6.4"
         say "Installing Bundler"
         run_script "gem install --no-rdoc --no-ri bundler -v #{version}"
