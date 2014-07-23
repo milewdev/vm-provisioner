@@ -184,7 +184,7 @@ module Provision
       end
     end
 
-    # Install :Ruby "2.1.2"
+    # Install :Ruby [ "2.1.2" ]
     module Ruby
       def osx(*args)
         version = args[0] || "2.1.2"
@@ -201,7 +201,7 @@ module Provision
       end
     end
     
-    # Install :Rails "4.1.4"
+    # Install :Rails [ "4.1.4" ]
     module Rails
       def osx(*args)
         version = args[0] || "4.1.4"
@@ -210,11 +210,12 @@ module Provision
       end
     end
 
-    # Install :Bundler
+    # Install :Bundler [ "1.6.4" ]
     module Bundler
       def osx
+        version = args[0] || "1.6.4"
         say "Installing Bundler"
-        run_script "gem install bundler"
+        run_script "gem install --no-rdoc --no-ri bundler -v #{version}"
       end
     end
 
