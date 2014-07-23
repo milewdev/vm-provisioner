@@ -184,35 +184,29 @@ module Provision
       end
     end
 
-    # Install :Ruby
+    # Install :Ruby "2.1.2"
     module Ruby
-      def osx
-        say "Installing Ruby"
-        run_script "brew install ruby"
-      end
-    end
-    
-    # Install :Ruby192
-    module Ruby192
-      def osx
-        say "Installing Ruby 1.9.2"
-        run_script <<-'EOF'
+      def osx(*args)
+        version = args[0] || "2.1.2"
+        say "Installing Ruby #{version}"
+        run_script <<-"EOF"
           brew install apple-gcc42
           brew install rbenv
           brew install ruby-build
-          rbenv install 1.9.2-p326
-          rbenv local 1.9.2-p326
+          rbenv install #{version}
+          rbenv local #{version}
           rbenv rehash
           echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
         EOF
       end
     end
     
-    # Install :Rails3019
-    module Rails3019
-      def osx
-        say "Installing Rails 3.0.19"
-        run_script "gem install --no-rdoc --no-ri rails -v 3.0.19"
+    # Install :Rails "4.1.4"
+    module Rails
+      def osx(*args)
+        version = args[0] || "4.1.4"
+        say "Installing Rails #{version}"
+        run_script "gem install --no-rdoc --no-ri rails -v #{version}"
       end
     end
 

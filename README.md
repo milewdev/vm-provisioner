@@ -110,9 +110,8 @@ Install :GitHubForMac
 Install :Node
 Install :TextMate
 Install :Homebrew
-Install :Ruby192
-Install :Ruby                   # Note: you must Install :Homebrew first
-Install :Rails3019
+Install :Ruby, 2.1.2        # Note: you must Install :Homebrew first
+Install :Rails, 4.1.4
 Install :Bundler
 Install :Python3
 Install :Virtualenv
