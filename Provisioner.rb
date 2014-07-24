@@ -194,7 +194,7 @@ module Provision
           brew install rbenv
           brew install ruby-build
           rbenv install #{version}
-          rbenv local #{version}
+          rbenv global #{version}
           rbenv rehash
           echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
         EOF
