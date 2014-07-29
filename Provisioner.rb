@@ -246,7 +246,7 @@ module Provision
     
     # Install :PostgreSQL [ "92" ]
     module PostgreSQL
-      def osx
+      def osx(*args)
         version = args[0] || ""         # blank version defaults to latest version
         say "Installing PostgreSQL"
         run_script <<-"EOF"
