@@ -110,11 +110,12 @@ Install :GitHubForMac
 Install :Node
 Install :TextMate
 Install :Homebrew
-Install :Ruby, 2.1.2        # Note: you must Install :Homebrew first
-Install :Rails, 4.1.4
+Install :Ruby [, 2.1.2]       # must Install :Homebrew first
+Install :Rails [, 4.1.4]
 Install :Bundler
 Install :Python3
 Install :Virtualenv
+Install :PostgreSQL [, 92]    # must Install :Homebrew first
 ```
 
 

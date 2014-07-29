@@ -178,7 +178,7 @@ module Provision
           ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
           echo export PATH='/usr/local/bin:$PATH' >> ~/.bash_profile
           brew update
-          # brew tap homebrew/versions    # did not work when installing ruby192 but left here for reference
+          brew tap homebrew/versions
           brew tap homebrew/dupes
         EOF
       end
@@ -240,6 +240,19 @@ module Provision
           sudo python setup.py install
           popd
           sudo rm -rf virtualenv-1.11.6
+        EOF
+      end
+    end
+    
+    # Install :PostgreSQL [ "92" ]
+    module PostgreSQL
+      def osx
+        version = args[0] || ""         # blank version defaults to latest version
+        say "Installing PostgreSQL"
+        run_script <<-"EOF"
+           brew install postgresql#{version}
+           initdb /usr/local/var/postgres
+           echo 'pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start' >> ~/.bash_profile
         EOF
       end
     end
