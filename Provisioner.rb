@@ -183,6 +183,14 @@ module Provision
         EOF
       end
     end
+    
+    # Install :HerokuToolbelt
+    module HerokuToolBelt
+      def osx
+        say "Installing Heroku Toolbelt"
+        install_pkg "https://toolbelt.heroku.com/download/osx"
+      end
+    end
 
     # Install :Ruby [ "2.1.2" ]
     module Ruby
