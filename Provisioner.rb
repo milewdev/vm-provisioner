@@ -185,7 +185,7 @@ module Provision
     end
     
     # Install :HerokuToolbelt
-    module HerokuToolBelt
+    module HerokuToolbelt
       def osx
         say "Installing Heroku Toolbelt"
         install_pkg "https://toolbelt.heroku.com/download/osx"
