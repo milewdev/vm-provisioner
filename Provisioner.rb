@@ -253,8 +253,7 @@ module Provision
            brew install postgresql#{version}
            rm -rf /usr/local/var/postgres/
            initdb /usr/local/var/postgres -E UTF8
-           ln -sfv /usr/local/opt/postgresql/*.plist ~/Library/LaunchAgents
-           # echo 'pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start' >> ~/.bash_profile
+           ln -nfs /usr/local/opt/postgresql/*.plist ~/Library/LaunchAgents
         EOF
       end
     end
