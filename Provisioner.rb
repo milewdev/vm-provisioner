@@ -251,8 +251,10 @@ module Provision
         say "Installing PostgreSQL"
         run_script <<-"EOF"
            brew install postgresql#{version}
-           initdb /usr/local/var/postgres
-           echo 'pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start' >> ~/.bash_profile
+           rm -rf /usr/local/var/postgres/
+           initdb /usr/local/var/postgres -E UTF8
+           ln -sfv /usr/local/opt/postgresql/*.plist ~/Library/LaunchAgents
+           # echo 'pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start' >> ~/.bash_profile
         EOF
       end
     end
