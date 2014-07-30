@@ -253,7 +253,8 @@ module Provision
            brew install postgresql#{version}
            rm -rf /usr/local/var/postgres/
            initdb /usr/local/var/postgres -E UTF8
-           ln -nfs /usr/local/opt/postgresql/*.plist ~/Library/LaunchAgents
+           mkdir -p ~/Library/LaunchAgents
+           ln -sfv /usr/local/opt/postgresql92/*.plist ~/Library/LaunchAgents
         EOF
       end
     end
