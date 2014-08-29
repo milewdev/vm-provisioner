@@ -209,6 +209,14 @@ module Provision
       end
     end
     
+    # Install :Qt
+    module Qt
+      def osx(*args)
+        say "Installing Qt"
+        run_script "brew install qt"
+      end
+    end
+    
     # Install :Rails [ "4.1.4" ]
     module Rails
       def osx(*args)
