@@ -381,6 +381,24 @@ end
 
 
 module Provision
+  module Run
+    
+    # Run :Shell, "/Users/vagrant/Documents/MyProjectDevEnv", "bin/rake db:setup"
+    module Shell
+      def osx(dir, command)
+        say "Running shell command: #{command}"
+        run_script <<-"EOF"
+          pushd "#{dir}"
+          #{command}
+          popd
+        EOF
+      end
+    end
+  end
+end
+
+
+module Provision
   module Reboot
     
     # Reboot :Vm
