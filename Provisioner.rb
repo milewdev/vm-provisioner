@@ -184,28 +184,19 @@ module Provision
       end
     end
     
+    # Install :ITerm2
+    module ITerm2
+      def osx
+        say "Installing iTerm2"
+        install_zip "https://iterm2.com/downloads/stable/iTerm2_v2_0.zip"
+      end
+    end
+    
     # Install :HerokuToolbelt
     module HerokuToolbelt
       def osx
         say "Installing Heroku Toolbelt"
         install_pkg "https://toolbelt.heroku.com/download/osx"
-      end
-    end
-
-    # Install :Ruby [ "2.1.2" ]
-    module Ruby
-      def osx(*args)
-        version = args[0] || "2.1.2"
-        say "Installing Ruby #{version}"
-        run_script <<-"EOF"
-          brew install apple-gcc42
-          brew install rbenv
-          brew install ruby-build
-          rbenv install #{version}
-          rbenv global #{version}
-          rbenv rehash
-          echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
-        EOF
       end
     end
     
@@ -214,6 +205,14 @@ module Provision
       def osx(*args)
         say "Installing Qt"
         run_script "brew install qt"
+      end
+    end
+    
+    # Install :PhantomJS
+    module PhantomJS
+      def osx(*args)
+        say "Installing PhantomJS"
+        run_script "brew install phantomjs"
       end
     end
     
@@ -271,6 +270,23 @@ module Provision
            initdb /usr/local/var/postgres -E UTF8
            mkdir -p ~/Library/LaunchAgents
            ln -sfv /usr/local/opt/postgresql92/*.plist ~/Library/LaunchAgents
+        EOF
+      end
+    end
+
+    # Install :Ruby [ "2.1.2" ]
+    module Ruby
+      def osx(*args)
+        version = args[0] || "2.1.2"
+        say "Installing Ruby #{version}"
+        run_script <<-"EOF"
+          brew install apple-gcc42
+          brew install rbenv
+          brew install ruby-build
+          rbenv install #{version}
+          rbenv global #{version}
+          rbenv rehash
+          echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
         EOF
       end
     end
