@@ -419,13 +419,46 @@ end
 #
 class Provisioner
   
+    @RUN_IN_DIRECTORY_DEFAULT = '.'
+  
     def self.provision(vagrant_config, &block)
       Provisioner.new(vagrant_config).send(:run, &block)    # use #send because #run is private
+    end
+    
+    def cd(project_vm_dir, &block)
+      @run_in_directory = project_vm_dir
+      block.call()
+    ensure
+      @run_in_directory = @RUN_IN_DIRECTORY_DEFAULT
+    end
+  
+    def install(product)
+      @tools.say "Installing #{product}"
+      send(product)
     end
   
   private
   
+    def bower
+      run2 'npm install bower'
+    end
+  
+    def grunt_cli
+      run2 'npm install grunt-cli'
+    end
+    
+    def foundation
+      run2 'gem install foundation'
+    end
+  
+    def run2(command)
+      @tools.run_script <<-"EOF"
+        ( cd "#{@run_directory}" && exec #{command} )
+      EOF
+    end
+  
     def initialize(vagrant_config)
+      @run_in_directory = @RUN_IN_DIRECTORY_DEFAULT
       @cache_root_dir = CACHE_ROOT_DIR
       @tools = OSXTools.new(vagrant_config, @cache_root_dir)
     end
