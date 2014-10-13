@@ -3,10 +3,6 @@
 #
 class Provisioner
 
-    attr_accessor :run_in_directory
-    attr_reader :run_in_directory_default
-    attr_reader :vagrant_config
-
     def self.provision(vagrant_config, &block)
       Provisioner.new(vagrant_config).send(:run, &block)
     end
@@ -89,7 +85,7 @@ class Provisioner
     end
 
     def copy_host_file_to_vm(host_path, vm_path)
-      vagrant_config().vm.provision :file, source: host_path, destination: vm_path
+      @vagrant_config.vm.provision :file, source: host_path, destination: vm_path
     end
 
     # TODO: need to escape single and double quotes in 'message' arg
@@ -98,10 +94,10 @@ class Provisioner
     end
 
     def run_script(script_code)
-      vagrant_config().vm.provision :shell, privileged: false, inline: <<-"EOF"
-        pushd #{run_in_directory()}
+      @vagrant_config.vm.provision :shell, privileged: false, inline: <<-"EOF"
+        pushd #{@run_in_directory} > /dev/null
         #{script_code}
-        popd
+        popd > /dev/null
       EOF
     end
 
@@ -296,10 +292,10 @@ class Provisioner
   # end
   #
   def cd(vm_dir, &block)
-    run_in_directory = vm_dir
+    @run_in_directory = vm_dir
     block.call()
   ensure
-    run_in_directory = run_in_directory_default
+    @run_in_directory = @run_in_directory_default
   end
 
   def reboot_vm
