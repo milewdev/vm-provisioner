@@ -122,7 +122,7 @@ class Provisioner
     npm_install 'bower', version
   end
 
-  def install_bundler(version)
+  def install_bundler(version = nil)
     gem_install 'bundler', version
   end
 
