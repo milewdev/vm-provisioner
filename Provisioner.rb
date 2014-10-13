@@ -99,9 +99,9 @@ class Provisioner
 
     def run_script(script_code)
       vagrant_config().vm.provision :shell, privileged: false, inline: <<-"EOF"
-        pushd #{run_in_directory()} > /dev/null
+        pushd #{run_in_directory()}
         #{script_code}
-        popd > /dev/null
+        popd
       EOF
     end
 
@@ -299,7 +299,7 @@ class Provisioner
     run_in_directory = vm_dir
     block.call()
   ensure
-    run_in_directory = run_in_directory_default()
+    run_in_directory = run_in_directory_default
   end
 
   def reboot_vm
