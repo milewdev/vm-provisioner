@@ -28,27 +28,6 @@ class Provisioner
 
   private
 
-    def npm_install(product = nil, version = nil)
-      if product.nil?
-        say "running 'npm install'"
-        run_script "npm install"
-      else
-        version ||= 'latest'
-        say "installing #{product} (#{version})"
-        run_script "npm install #{product}@#{version}"
-      end
-    end
-
-    def gem_install(product, version)
-      if version.nil?
-        say "installing #{product} (latest)"
-        run_script "gem install --no-rdoc --no-ri #{product}"
-      else
-        say "installing #{product} (#{version})"
-        run_script "gem install --no-rdoc --no-ri #{product} -v #{version}"
-      end
-    end
-
     def dmg_install(url_of_dmg_file)
       run_script <<-"EOF"
         curl -L -o install.dmg #{url_of_dmg_file}
@@ -110,25 +89,18 @@ end
 class Provisioner
 
   def install_atom
-    say "installing atom editor"
+    say "Installing atom editor"
     zip_install 'https://atom.io/download/mac'
   end
 
-  def install_bower(version = nil)
-    npm_install 'bower', version
-  end
-
   def install_bundler(version = nil)
-    gem_install 'bundler', version
+    say "Installing bundler"
+    run_script 'gem install bundler'
   end
 
   def bundle_install
-    say "running 'bundle install'"
+    say "Running 'bundle install'"
     run_script "bundle install"
-  end
-
-  def install_foundation(version = nil)
-    gem_install 'foundation', version
   end
 
   def install_git(version = '2.0.1')
@@ -159,10 +131,6 @@ class Provisioner
     copy_host_file_to_vm "~/.gnupg/trustdb.gpg", ".gnupg/trustdb.gpg"
     copy_host_file_to_vm "~/.gnupg/pubring.gpg~", ".gnupg/pubring.gpg~"
     copy_host_file_to_vm "~/.gnupg/random_seed", ".gnupg/random_seed"
-  end
-
-  def install_grunt_cli(version = nil)
-    npm_install 'grunt-cli', version
   end
 
   def install_heroku_toolbelt
@@ -201,6 +169,11 @@ class Provisioner
     pkg_install "http://nodejs.org/dist/#{version}/node-#{version}.pkg"
   end
 
+  def npm_install
+    say "Running 'npm install'"
+    run_script "npm install"
+  end
+
   def install_phantomjs
     say "Installing PhantomJS"
     run_script "brew install phantomjs"
@@ -236,10 +209,6 @@ class Provisioner
   def install_qt
     say "Installing Qt"
     run_script "brew install qt"
-  end
-
-  def install_rails(version = nil)
-    gem_install 'rails', version
   end
 
   def install_ruby(version = nil)
