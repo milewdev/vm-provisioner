@@ -113,6 +113,11 @@ end
 #
 class Provisioner
 
+  def install_atom
+    say "installing atom editor"
+    zip_install 'https://atom.io/download/mac'
+  end
+
   def install_bower(version = nil)
     npm_install 'bower', version
   end
