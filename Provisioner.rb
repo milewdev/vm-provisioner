@@ -245,6 +245,11 @@ class Provisioner
     EOF
   end
 
+  def add_to_path(path)
+    say "Adding '#{path}' to path"
+    echo "export PATH=#{path}:$PATH" >> ~/.bash_profile
+  end
+
   #
   # Run commands in a specific directory.  For example:
   #
