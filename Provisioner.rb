@@ -247,7 +247,9 @@ class Provisioner
 
   def add_to_path(path)
     say "Adding '#{path}' to path"
-    echo "export PATH=#{path}:$PATH" >> ~/.bash_profile
+    run_script <<-"EOF"
+      echo 'export PATH=#{path}:$PATH' >> ~/.bash_profile
+    EOF
   end
 
   #
