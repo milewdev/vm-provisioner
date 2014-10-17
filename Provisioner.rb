@@ -33,7 +33,11 @@ class Provisioner
         curl -L -o install.dmg #{url_of_dmg_file}
         hdiutil detach "/Volumes/_vm_provisioning_" > /dev/null 2>&1
         hdiutil attach install.dmg -mountpoint "/Volumes/_vm_provisioning_"
-        sudo installer -pkg "`ls /Volumes/_vm_provisioning_/*.*pkg`" -target /
+        if ls /Volumes/_vm_provisioning_/*.*pkg &> /dev/null; then
+          sudo installer -pkg "`ls /Volumes/_vm_provisioning_/*.*pkg`" -target /
+        elif ls -d /Volumes/_vm_provisioning_/*.app &> /dev/null; then
+          sudo cp -R "`ls -d /Volumes/_vm_provisioning_/*.app`" /Applications
+        fi
         hdiutil detach "/Volumes/_vm_provisioning_"
         rm -f install.dmg
       EOF
@@ -103,12 +107,6 @@ class Provisioner
     run_script "bundle install"
   end
 
-  def install_git(version = '2.0.1')
-    say "Installing git and copying .gitconfig from vm host"
-    dmg_install "http://sourceforge.net/projects/git-osx-installer/files/git-#{version}-intel-universal-snow-leopard.dmg/download?use_mirror=autoselect"
-    copy_host_file_to_vm "~/.gitconfig", ".gitconfig"
-  end
-
   def install_chrome
     say "Installing google chrome browser"
     dmg_install "https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg"
@@ -117,6 +115,12 @@ class Provisioner
   def install_firefox
     say "Installing Mozilla firefox browser"
     dmg_install "https://download-installer.cdn.mozilla.net/pub/firefox/releases/33.0/mac/en-US/Firefox%2033.0.dmg"
+  end
+
+  def install_git(version = '2.0.1')
+    say "Installing git and copying .gitconfig from vm host"
+    dmg_install "http://sourceforge.net/projects/git-osx-installer/files/git-#{version}-intel-universal-snow-leopard.dmg/download?use_mirror=autoselect"
+    copy_host_file_to_vm "~/.gitconfig", ".gitconfig"
   end
 
   #
