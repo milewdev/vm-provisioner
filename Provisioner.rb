@@ -109,6 +109,16 @@ class Provisioner
     copy_host_file_to_vm "~/.gitconfig", ".gitconfig"
   end
 
+  def install_chrome
+    say "Installing google chrome browser"
+    dmg_install "https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg"
+  end
+
+  def install_firefox
+    say "Installing Mozilla firefox browser"
+    dmg_install "https://download-installer.cdn.mozilla.net/pub/firefox/releases/33.0/mac/en-US/Firefox%2033.0.dmg"
+  end
+
   #
   # git_clone "https://github.com/me/my_project.git", "/Users/vagrant/Documents/my_project"
   #
