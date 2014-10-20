@@ -71,9 +71,9 @@ class Provisioner
       @vagrant_config.vm.provision :file, source: host_path, destination: vm_path
     end
 
-    # TODO: need to escape single and double quotes in 'message' arg
     def say(message)
-      run_script "echo '--------------- #{message} ---------------'"
+      message = message.gsub(/(['"><|])/, '\\\\\1')   # '"><|  =>  \'\"\>\<\|
+      run_script "echo --------------- #{message} ---------------"
     end
 
     def run_script(script_code)
