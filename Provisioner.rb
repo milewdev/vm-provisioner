@@ -72,7 +72,7 @@ class Provisioner
     end
 
     def say(message)
-      message = message.gsub(/(['"><|])/, '\\\\\1')   # '"><|  =>  \'\"\>\<\|
+      message = message.gsub(/(['"><|()])/, '\\\\\1')   # '"><|  =>  \'\"\>\<\|
       run_script "echo --------------- #{message} ---------------"
     end
 
