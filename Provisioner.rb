@@ -33,8 +33,8 @@ class Provisioner
         curl -L -o install.dmg #{url_of_dmg_file}
         hdiutil detach "/Volumes/_vm_provisioning_" > /dev/null 2>&1
         hdiutil attach install.dmg -mountpoint "/Volumes/_vm_provisioning_"
-        if ls /Volumes/_vm_provisioning_/*.*pkg &> /dev/null; then
-          sudo installer -pkg "`ls /Volumes/_vm_provisioning_/*.*pkg`" -target /
+        if ls -d /Volumes/_vm_provisioning_/*.*pkg &> /dev/null; then
+          sudo installer -pkg "`ls -d /Volumes/_vm_provisioning_/*.*pkg`" -target /
         elif ls -d /Volumes/_vm_provisioning_/*.app &> /dev/null; then
           sudo cp -R "`ls -d /Volumes/_vm_provisioning_/*.app`" /Applications
         fi
