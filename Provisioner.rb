@@ -246,15 +246,17 @@ class Provisioner
 
   def install_virtualenv
     say "Installing Python's virtualenv"
-    url = "https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.11.6.tar.gz"
-    filename = "virtualenv-1.11.6.tar.gz"
+    version = "1.11.6"
+    directory = "virtualenv-#{version}"
+    filename = "virtualenv-#{version}.tar.gz"
+    url = "https://pypi.python.org/packages/source/v/virtualenv/#{filename}"
     run_script <<-"EOF"
       curl -L -o #{filename} #{url}
-      tar xvfz "#{filename}"
-      pushd virtualenv-1.11.6
+      tar xvfz #{filename}
+      pushd #{directory}
       sudo python setup.py install
       popd
-      sudo rm -rf virtualenv-1.11.6
+      sudo rm -rf #{directory}
       rm -f #{filename}
     EOF
   end
