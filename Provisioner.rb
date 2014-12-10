@@ -97,7 +97,7 @@ class Provisioner
     zip_install 'https://atom.io/download/mac'
   end
 
-  def install_bundler(version = nil)
+  def install_bundler
     say "Installing bundler"
     run_script 'gem install bundler'
   end
