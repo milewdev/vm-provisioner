@@ -6,5 +6,5 @@ Is [here](http://milewdev.github.io/vm-provisioner.doc/).
 
 ###Source installation
 ```shell
-$ git clone https://github.com/milewdev/vm-provisioner.git
+$ git clone https://github.com/milewdev/vm-provisioner.git ~/work/vm-provisioner
 ```
